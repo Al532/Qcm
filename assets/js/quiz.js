@@ -88,24 +88,25 @@ function createQuizLoadError(slug, fetchUrl, detail) {
 }
 
 function normalizeQuestionMedia(questionData) {
-  if (!questionData || !questionData.media || !questionData.media.src) {
-    return questionData;
-  }
-
-  const mediaSrc = String(questionData.media.src).trim();
-  const normalizedSrc = normalizeMediaPath(mediaSrc);
-
-  if (normalizedSrc === mediaSrc) {
-    return questionData;
-  }
+  if (!questionData) return questionData;
 
   return {
     ...questionData,
-    media: {
-      ...questionData.media,
-      src: normalizedSrc,
-    },
+    promptMedia: normalizeMediaEntries(questionData.promptMedia),
+    choices: (questionData.choices || []).map((choice) => ({
+      ...choice,
+      media: normalizeMediaEntries(choice.media),
+    })),
   };
+}
+
+function normalizeMediaEntries(mediaData) {
+  const mediaList = Array.isArray(mediaData) ? mediaData : mediaData ? [mediaData] : [];
+
+  return mediaList.map((media) => ({
+    ...media,
+    src: normalizeMediaPath(String(media.src || '').trim()),
+  }));
 }
 
 function normalizeMediaPath(src) {
@@ -151,31 +152,37 @@ function buildQuestionCard(questionData, index) {
 
   const heading = document.createElement('h2');
   heading.id = titleId;
-  heading.textContent = `Q${index + 1} — ${labelForType(questionData.type)}`;
+  const questionType = normalizeQuestionType(questionData.type);
+  heading.textContent = `Q${index + 1} — ${labelForType(questionType)}`;
 
   const prompt = document.createElement('p');
   prompt.textContent = questionData.prompt || 'Question';
 
   section.append(heading, prompt);
 
-  if (questionData.type === 'image' && questionData.media && questionData.media.src) {
-    section.appendChild(buildImageBlock(questionData.media));
-  }
-
-  if (questionData.type === 'audio' && questionData.media && questionData.media.src) {
-    section.appendChild(buildAudioBlock(questionData.media));
-  }
+  appendMediaBlocks(section, questionData.promptMedia);
 
   const choices = document.createElement('div');
   choices.className = 'choices';
   choices.setAttribute('role', 'group');
   choices.setAttribute('aria-label', `Réponses de la question ${index + 1}`);
 
+  const isMultiple = questionType === 'multiple';
+
+  section.dataset.questionType = questionType;
+  section.dataset.correctChoiceIds = JSON.stringify(getCorrectChoiceIds(questionData, isMultiple));
+
   (questionData.choices || []).forEach((choice) => {
+    if (isMultiple) {
+      choices.appendChild(buildMultipleChoiceRow(choice, questionId));
+      return;
+    }
+
     const button = document.createElement('button');
     button.type = 'button';
-    button.dataset.correct = String(choice.id === questionData.correctChoiceId);
+    button.dataset.choiceId = choice.id;
     button.textContent = choice.label || choice.id;
+    appendMediaBlocks(button, choice.media);
     choices.appendChild(button);
   });
 
@@ -185,10 +192,58 @@ function buildQuestionCard(questionData, index) {
   feedback.hidden = true;
   feedback.textContent = questionData.explanation || '';
 
-  section.append(choices, feedback);
+  section.append(choices);
+
+  if (isMultiple) {
+    const validateButton = document.createElement('button');
+    validateButton.type = 'button';
+    validateButton.className = 'button-link';
+    validateButton.textContent = 'Valider les réponses';
+    validateButton.dataset.action = 'validate-multiple';
+    section.appendChild(validateButton);
+  }
+
+  section.append(feedback);
   wireQuestionInteractions(section);
 
   return section;
+}
+
+function buildMultipleChoiceRow(choice, questionId) {
+  const wrapper = document.createElement('label');
+  wrapper.className = 'choice-option';
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.value = choice.id;
+  checkbox.name = `${questionId}-choice`;
+
+  const text = document.createElement('span');
+  text.textContent = choice.label || choice.id;
+
+  wrapper.append(checkbox, text);
+  appendMediaBlocks(wrapper, choice.media);
+
+  return wrapper;
+}
+
+function appendMediaBlocks(target, mediaData) {
+  const mediaList = Array.isArray(mediaData)
+    ? mediaData
+    : mediaData
+      ? [mediaData]
+      : [];
+
+  mediaList.forEach((media) => {
+    if (!media || !media.src) return;
+
+    if (media.kind === 'audio') {
+      target.appendChild(buildAudioBlock(media));
+      return;
+    }
+
+    target.appendChild(buildImageBlock(media));
+  });
 }
 
 function buildImageBlock(media) {
@@ -228,9 +283,28 @@ function buildAudioBlock(media) {
 }
 
 function labelForType(type) {
-  if (type === 'image') return 'Lecture visuelle (image)';
-  if (type === 'audio') return 'Reconnaissance auditive (audio)';
-  return 'Question (texte)';
+  if (type === 'multiple') return 'Réponses multiples';
+  return 'Réponse unique';
+}
+
+function normalizeQuestionType(type) {
+  return type === 'multiple' ? 'multiple' : 'single';
+}
+
+function getCorrectChoiceIds(questionData, isMultiple) {
+  if (isMultiple) {
+    if (Array.isArray(questionData.correctChoiceIds)) {
+      return questionData.correctChoiceIds;
+    }
+
+    if (questionData.correctChoiceId) {
+      return [questionData.correctChoiceId];
+    }
+
+    return [];
+  }
+
+  return questionData.correctChoiceId ? [questionData.correctChoiceId] : [];
 }
 
 function showError(status, message) {
@@ -249,20 +323,28 @@ function initStaticQuiz() {
 }
 
 function wireQuestionInteractions(question) {
+  const questionType = question.dataset.questionType || 'single';
+  if (questionType === 'multiple') {
+    wireMultipleQuestionInteractions(question);
+    return;
+  }
+
   const buttons = question.querySelectorAll('.choices button');
   const feedback = question.querySelector('.feedback');
+  const correctChoiceIds = JSON.parse(question.dataset.correctChoiceIds || '[]');
+  const correctChoiceId = correctChoiceIds[0];
 
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
       if (question.dataset.locked === 'true') return;
 
-      const isCorrect = button.dataset.correct === 'true';
+      const isCorrect = button.dataset.choiceId === correctChoiceId;
 
       button.classList.add(isCorrect ? 'correct' : 'incorrect');
 
       buttons.forEach((btn) => {
         btn.disabled = true;
-        if (btn.dataset.correct === 'true') {
+        if (btn.dataset.choiceId === correctChoiceId) {
           btn.classList.add('correct');
         }
       });
@@ -281,5 +363,57 @@ function wireQuestionInteractions(question) {
 
       question.dataset.locked = 'true';
     });
+  });
+}
+
+function wireMultipleQuestionInteractions(question) {
+  const validateButton = question.querySelector('[data-action="validate-multiple"]');
+  const checkboxes = question.querySelectorAll('.choices input[type="checkbox"]');
+  const feedback = question.querySelector('.feedback');
+  const correctChoiceIds = JSON.parse(question.dataset.correctChoiceIds || '[]');
+
+  if (!validateButton) return;
+
+  validateButton.addEventListener('click', () => {
+    if (question.dataset.locked === 'true') return;
+
+    const selected = Array.from(checkboxes)
+      .filter((input) => input.checked)
+      .map((input) => input.value)
+      .sort();
+    const expected = [...correctChoiceIds].sort();
+
+    const isCorrect =
+      selected.length === expected.length && selected.every((value, index) => value === expected[index]);
+
+    checkboxes.forEach((input) => {
+      input.disabled = true;
+      const row = input.closest('.choice-option');
+      if (!row) return;
+
+      if (expected.includes(input.value)) {
+        row.classList.add('correct');
+      }
+
+      if (input.checked && !expected.includes(input.value)) {
+        row.classList.add('incorrect');
+      }
+    });
+
+    validateButton.disabled = true;
+
+    if (feedback) {
+      feedback.hidden = false;
+      feedback.classList.remove('correct', 'incorrect');
+      feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+      const prefix = isCorrect ? 'Bonnes réponses. ' : 'Réponses incorrectes. ';
+
+      if (!feedback.dataset.prefixed) {
+        feedback.prepend(document.createTextNode(prefix));
+        feedback.dataset.prefixed = 'true';
+      }
+    }
+
+    question.dataset.locked = 'true';
   });
 }
