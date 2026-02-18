@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz vidéo - Harmonie interactive</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <p class="eyebrow">Version dynamique</p>
+        <h1 data-quiz-title>Quiz vidéo</h1>
+        <p>
+          Astuce : cliquez une seule réponse par question. Le feedback apparaît
+          immédiatement et la question se verrouille.
+        </p>
+        <p class="media-note" data-quiz-meta>Chargement du quiz…</p>
+      </header>
+
+      <p class="card" data-quiz-status>
+        Chargement du quiz en cours…
+      </p>
+
+      <div data-quiz-root></div>
+
+      <p><a class="button-link" href="../index.html">Retour à l'accueil</a></p>
+    </main>
+
+    <script src="../assets/js/quiz.js"></script>
+  </body>
+</html>
