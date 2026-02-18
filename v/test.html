@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test QCM - Harmonie interactive</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <p class="eyebrow">Version démo</p>
+        <h1>Test QCM - Théorie musicale</h1>
+        <p>
+          Astuce : cliquez une seule réponse par question. Le feedback apparaît
+          immédiatement et la question se verrouille.
+        </p>
+      </header>
+
+      <!--
+        Pour créer une nouvelle page de quiz :
+        1) Dupliquez ce fichier.
+        2) Copiez/collez un bloc <section class="card question"> par question.
+        3) Ajustez data-correct sur les boutons (true/false) et le texte feedback.
+        4) Remplacez les chemins médias par vos fichiers réels.
+      -->
+
+      <section class="card question" aria-labelledby="q1-title">
+        <h2 id="q1-title">Q1 — Intervalle (texte)</h2>
+        <p>Quel est l'intervalle entre Do et Sol ?</p>
+        <div class="choices" role="group" aria-label="Réponses de la question 1">
+          <button type="button" data-correct="false">Quarte juste</button>
+          <button type="button" data-correct="true">Quinte juste</button>
+          <button type="button" data-correct="false">Sixte mineure</button>
+        </div>
+        <p class="feedback" aria-live="polite" hidden>
+          Explication : Do → Sol correspond à 7 demi-tons, soit une quinte juste.
+        </p>
+      </section>
+
+      <section class="card question" aria-labelledby="q2-title">
+        <h2 id="q2-title">Q2 — Lecture visuelle (image)</h2>
+        <p>Observez l'exemple et choisissez la bonne proposition.</p>
+        <figure class="media-block">
+          <!-- Placeholder path: ajoutez votre image réelle dans ce chemin -->
+          <img
+            src="../assets/img/example.png"
+            alt="Exemple de notation musicale utilisé pour la question"
+            width="640"
+            height="360"
+          />
+          <figcaption>
+            Chemin d'exemple : <code>assets/img/example.png</code>
+          </figcaption>
+        </figure>
+        <div class="choices" role="group" aria-label="Réponses de la question 2">
+          <button type="button" data-correct="false">Accord majeur</button>
+          <button type="button" data-correct="true">Accord mineur</button>
+          <button type="button" data-correct="false">Accord diminué</button>
+        </div>
+        <p class="feedback" aria-live="polite" hidden>
+          Explication : la tierce mineure indique ici une qualité mineure.
+        </p>
+      </section>
+
+      <section class="card question" aria-labelledby="q3-title">
+        <h2 id="q3-title">Q3 — Reconnaissance auditive (audio)</h2>
+        <p>Écoutez l'extrait puis sélectionnez la meilleure réponse.</p>
+        <div class="media-block">
+          <!-- Placeholder path: ajoutez votre audio réel dans ce chemin -->
+          <audio controls preload="none">
+            <source src="../assets/audio/example.mp3" type="audio/mpeg" />
+            Votre navigateur ne supporte pas la lecture audio HTML5.
+          </audio>
+          <p class="media-note">
+            Chemin d'exemple : <code>assets/audio/example.mp3</code>
+          </p>
+        </div>
+        <div class="choices" role="group" aria-label="Réponses de la question 3">
+          <button type="button" data-correct="true">Cadence parfaite</button>
+          <button type="button" data-correct="false">Cadence rompue</button>
+          <button type="button" data-correct="false">Cadence plagale</button>
+        </div>
+        <p class="feedback" aria-live="polite" hidden>
+          Explication : la résolution dominante vers tonique suggère une cadence parfaite.
+        </p>
+      </section>
+
+      <p><a class="button-link" href="../index.html">Retour à l'accueil</a></p>
+    </main>
+
+    <script src="../assets/js/quiz.js"></script>
+  </body>
+</html>
