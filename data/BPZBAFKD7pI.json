@@ -13,32 +13,6 @@
       ],
       "correctChoiceId": "a",
       "explanation": "Il s'agit du IIe degré."
-    },
-    {
-      "id": "q2",
-      "type": "image",
-      "prompt": "Question avec image : … ?",
-      "media": {"src": "/assets/img/test.png", "alt": "Image test"},
-      "choices": [
-        {"id": "a", "label": "A"},
-        {"id": "b", "label": "B"},
-        {"id": "c", "label": "C"}
-      ],
-      "correctChoiceId": "b",
-      "explanation": "Explication courte."
-    },
-    {
-      "id": "q3",
-      "type": "audio",
-      "prompt": "Question audio : quel exemple correspond ?",
-      "media": {"src": "/assets/audio/test.mp3"},
-      "choices": [
-        {"id": "a", "label": "A"},
-        {"id": "b", "label": "B"},
-        {"id": "c", "label": "C"}
-      ],
-      "correctChoiceId": "c",
-      "explanation": "Explication courte."
     }
   ]
 }
