@@ -89,6 +89,31 @@ button:focus-visible {
   margin-top: 0.75rem;
 }
 
+.choice-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.choice-option.correct {
+  background: var(--ok-bg);
+  border-color: #7db58d;
+}
+
+.choice-option.incorrect {
+  background: var(--bad-bg);
+  border-color: #df9a97;
+}
+
+.choice-option input {
+  margin-top: 0.25rem;
+}
+
 .feedback {
   margin-top: 0.85rem;
   padding: 0.7rem 0.8rem;

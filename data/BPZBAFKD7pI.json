@@ -4,15 +4,42 @@
   "questions": [
     {
       "id": "q1",
-      "type": "text",
       "prompt": "avant G7-C, on peut avoir",
       "choices": [
-        {"id": "a", "label": "Dm7"},
-        {"id": "b", "label": "E7"},
-        {"id": "c", "label": "B7"}
+        { "id": "a", "label": "Dm7" },
+        { "id": "b", "label": "E7" },
+        { "id": "c", "label": "B7" }
       ],
       "correctChoiceId": "a",
       "explanation": "Il s'agit du IIe degré."
+    },
+    {
+      "id": "q2",
+      "type": "multiple",
+      "prompt": "Sélectionnez toutes les propositions qui peuvent enrichir un anatole en Do majeur.",
+      "choices": [
+        {
+          "id": "a",
+          "label": "Ajouter des tensions sur G7",
+          "media": {
+            "kind": "audio",
+            "src": "../assets/audio/example.mp3",
+            "alt": "Exemple audio de tension sur dominante"
+          }
+        },
+        { "id": "b", "label": "Substituer Am7 par A7" },
+        {
+          "id": "c",
+          "label": "Utiliser un enchaînement II-V de passage",
+          "media": {
+            "kind": "image",
+            "src": "../assets/img/example.png",
+            "alt": "Exemple de grille avec II-V de passage"
+          }
+        }
+      ],
+      "correctChoiceIds": ["a", "c"],
+      "explanation": "Les tensions de dominante et les II-V de passage sont des enrichissements fréquents."
     }
   ]
 }

@@ -4,7 +4,6 @@
   "questions": [
     {
       "id": "q1",
-      "type": "text",
       "prompt": "Quel est l'intervalle entre Do et Sol ?",
       "choices": [
         { "id": "a", "label": "Quarte juste" },
@@ -16,9 +15,9 @@
     },
     {
       "id": "q2",
-      "type": "image",
       "prompt": "Observez l'exemple et choisissez la bonne proposition.",
-      "media": {
+      "promptMedia": {
+        "kind": "image",
         "src": "../assets/img/example.png",
         "alt": "Exemple de notation musicale utilisé pour la question"
       },
@@ -32,9 +31,9 @@
     },
     {
       "id": "q3",
-      "type": "audio",
       "prompt": "Écoutez l'extrait puis sélectionnez la meilleure réponse.",
-      "media": {
+      "promptMedia": {
+        "kind": "audio",
         "src": "../assets/audio/example.mp3",
         "alt": "Extrait audio de cadence"
       },
@@ -45,6 +44,19 @@
       ],
       "correctChoiceId": "a",
       "explanation": "Explication : la résolution dominante vers tonique suggère une cadence parfaite."
+    },
+    {
+      "id": "q4",
+      "type": "multiple",
+      "prompt": "Parmi ces accords, lesquels appartiennent à la tonalité de Do majeur ?",
+      "choices": [
+        { "id": "a", "label": "Dm7" },
+        { "id": "b", "label": "E7" },
+        { "id": "c", "label": "G7" },
+        { "id": "d", "label": "Bdim" }
+      ],
+      "correctChoiceIds": ["a", "c", "d"],
+      "explanation": "Dm7 (II), G7 (V) et Bdim (VII) sont diatoniques en Do majeur."
     }
   ]
 }
