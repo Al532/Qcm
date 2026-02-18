@@ -1,0 +1,50 @@
+{
+  "title": "Test QCM - Théorie musicale",
+  "videoId": "demo-test",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "text",
+      "prompt": "Quel est l'intervalle entre Do et Sol ?",
+      "choices": [
+        { "id": "a", "label": "Quarte juste" },
+        { "id": "b", "label": "Quinte juste" },
+        { "id": "c", "label": "Sixte mineure" }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Explication : Do → Sol correspond à 7 demi-tons, soit une quinte juste."
+    },
+    {
+      "id": "q2",
+      "type": "image",
+      "prompt": "Observez l'exemple et choisissez la bonne proposition.",
+      "media": {
+        "src": "../assets/img/example.png",
+        "alt": "Exemple de notation musicale utilisé pour la question"
+      },
+      "choices": [
+        { "id": "a", "label": "Accord majeur" },
+        { "id": "b", "label": "Accord mineur" },
+        { "id": "c", "label": "Accord diminué" }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Explication : la tierce mineure indique ici une qualité mineure."
+    },
+    {
+      "id": "q3",
+      "type": "audio",
+      "prompt": "Écoutez l'extrait puis sélectionnez la meilleure réponse.",
+      "media": {
+        "src": "../assets/audio/example.mp3",
+        "alt": "Extrait audio de cadence"
+      },
+      "choices": [
+        { "id": "a", "label": "Cadence parfaite" },
+        { "id": "b", "label": "Cadence rompue" },
+        { "id": "c", "label": "Cadence plagale" }
+      ],
+      "correctChoiceId": "a",
+      "explanation": "Explication : la résolution dominante vers tonique suggère une cadence parfaite."
+    }
+  ]
+}
