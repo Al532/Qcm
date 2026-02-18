@@ -1,6 +1,6 @@
 /*
   Logique QCM réutilisable.
-  - Mode dynamique: lit ?slug=... puis charge /data/<slug>.json.
+  - Mode dynamique: lit ?slug=... puis charge ../data/<slug>.json.
   - Mode statique (legacy): conserve l'ancien comportement si des questions HTML existent déjà.
 */
 
@@ -34,30 +34,90 @@ function initDynamicQuiz(root) {
       if (status) status.hidden = true;
     })
     .catch((error) => {
-      console.error(error);
-      showError(
-        status,
-        "Impossible de charger ce quiz. Vérifiez le slug, puis réessayez dans quelques instants."
-      );
+      console.error(error.message, { slug: error.slug || slug, fetchUrl: error.fetchUrl });
+      showError(status, error.message);
     });
 }
 
 async function loadQuizData(slug) {
-  const response = await fetch(`/data/${encodeURIComponent(slug)}.json`, {
-    headers: { Accept: 'application/json' },
-  });
+  const safeSlug = encodeURIComponent(slug);
+  const dataUrl = `../data/${safeSlug}.json`;
+
+  let response;
+
+  try {
+    response = await fetch(dataUrl, {
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+  } catch (error) {
+    throw createQuizLoadError(slug, dataUrl, `Erreur réseau lors du chargement du quiz.`);
+  }
 
   if (!response.ok) {
-    throw new Error(`Quiz introuvable pour le slug "${slug}" (${response.status}).`);
+    throw createQuizLoadError(
+      slug,
+      dataUrl,
+      `Quiz introuvable pour le slug "${slug}" (${response.status}).`
+    );
   }
 
-  const data = await response.json();
+  let data;
+
+  try {
+    data = await response.json();
+  } catch (error) {
+    throw createQuizLoadError(slug, dataUrl, 'Le fichier JSON est invalide ou illisible.');
+  }
 
   if (!data || !Array.isArray(data.questions)) {
-    throw new Error('Le JSON du quiz est invalide.');
+    throw createQuizLoadError(slug, dataUrl, 'Le JSON du quiz est invalide.');
   }
 
+  data.questions = data.questions.map((question) => normalizeQuestionMedia(question));
+
   return data;
+}
+
+function createQuizLoadError(slug, fetchUrl, detail) {
+  const message = `Impossible de charger ce quiz (slug: "${slug}", URL: "${fetchUrl}"). ${detail}`;
+  const error = new Error(message);
+  error.slug = slug;
+  error.fetchUrl = fetchUrl;
+  return error;
+}
+
+function normalizeQuestionMedia(questionData) {
+  if (!questionData || !questionData.media || !questionData.media.src) {
+    return questionData;
+  }
+
+  const mediaSrc = String(questionData.media.src).trim();
+  const normalizedSrc = normalizeMediaPath(mediaSrc);
+
+  if (normalizedSrc === mediaSrc) {
+    return questionData;
+  }
+
+  return {
+    ...questionData,
+    media: {
+      ...questionData.media,
+      src: normalizedSrc,
+    },
+  };
+}
+
+function normalizeMediaPath(src) {
+  if (!src || /^(https?:)?\/\//i.test(src) || src.startsWith('data:')) {
+    return src;
+  }
+
+  if (src.startsWith('/')) {
+    return `..${src}`;
+  }
+
+  return src;
 }
 
 function renderQuiz(root, quizData) {
