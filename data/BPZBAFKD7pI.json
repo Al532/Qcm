@@ -1,0 +1,44 @@
+{
+  "title": "L'anatole étendu",
+  "videoId": "BPZBAFKD7pI",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "text",
+      "prompt": "avant G7-C, on peut avoir",
+      "choices": [
+        {"id": "a", "label": "Dm7"},
+        {"id": "b", "label": "E7"},
+        {"id": "c", "label": "B7"}
+      ],
+      "correctChoiceId": "a",
+      "explanation": "Il s'agit du IIe degré."
+    },
+    {
+      "id": "q2",
+      "type": "image",
+      "prompt": "Question avec image : … ?",
+      "media": {"src": "/assets/img/test.png", "alt": "Image test"},
+      "choices": [
+        {"id": "a", "label": "A"},
+        {"id": "b", "label": "B"},
+        {"id": "c", "label": "C"}
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Explication courte."
+    },
+    {
+      "id": "q3",
+      "type": "audio",
+      "prompt": "Question audio : quel exemple correspond ?",
+      "media": {"src": "/assets/audio/test.mp3"},
+      "choices": [
+        {"id": "a", "label": "A"},
+        {"id": "b", "label": "B"},
+        {"id": "c", "label": "C"}
+      ],
+      "correctChoiceId": "c",
+      "explanation": "Explication courte."
+    }
+  ]
+}
